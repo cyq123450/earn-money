@@ -5,6 +5,6 @@ package com.cyq.money.taobao.service;
  */
 public interface CommodityCategoryService {
 
-    public void getCategory();
+    public String getCategory();
 
 }

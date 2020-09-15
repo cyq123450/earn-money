@@ -11,7 +11,10 @@ import lombok.Getter;
 public enum Constants {
 
     SIGN_METHOD_MD5("md5"), SIGN_METHOD_HMAC("hmac"),
-    CHARSET_UTF8("UTF-8");
+    CHARSET_UTF8("UTF-8"),
+
+    淘宝客_推广者_物料精选("taobao.tbk.dg.optimus.material")
+    ;
 
     private String val;
 
@@ -19,4 +22,7 @@ public enum Constants {
         this.val = val;
     }
 
+    public String getVal() {
+        return val;
+    }
 }

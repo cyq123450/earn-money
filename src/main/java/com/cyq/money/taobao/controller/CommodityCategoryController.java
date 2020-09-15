@@ -21,8 +21,8 @@ public class CommodityCategoryController {
 
     @GetMapping("/get-category")
     public Object getCategory() {
-
-        return ResponseResult.success();
+        String category = commodityCategoryService.getCategory();
+        return ResponseResult.success(category);
     }
 
 }
