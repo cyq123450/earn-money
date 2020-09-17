@@ -1,13 +1,14 @@
 package com.cyq.money.taobao.controller;
 
 import com.cyq.money.commons.ResponseResult;
-import com.cyq.money.taobao.service.MaterialOptionalService;
+import com.cyq.money.taobao.commons.PageHelper;
+import com.cyq.money.taobao.commons.TaoBaoPropertiesReader;
+import com.cyq.money.taobao.service.MaterialService;
+import com.cyq.money.vo.PageHelperParamVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,16 +21,44 @@ import java.util.Map;
 public class HomePageController {
 
     @Autowired
-    private MaterialOptionalService materialOptionalService;
+    private MaterialService materialOptionalService;
 
-    @GetMapping("/search/by-title")
-    public Object searchByTitle(@RequestParam("titleName") String titleName) {
+    /**
+     * 首页中的搜索框接口
+     * @param paramVO
+     * @return
+     */
+    @PostMapping("/search/by-title")
+    public Object searchByTitle(@RequestBody PageHelperParamVO paramVO) {
         try {
-            Map<String, Object> result = materialOptionalService.getProductByTitle(titleName);
+            Map<String, Object> result = materialOptionalService.getProductByTitle(paramVO);
             return ResponseResult.success(result);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseResult.failed();
+        }
+    }
+
+    /**
+     * 今日必抢
+     * @param paramVO
+     * @return
+     */
+    @PostMapping("/search/sale-day")
+    public Object seachSaleVeryDay(@RequestBody PageHelperParamVO paramVO) {
+        try {
+            Map<String, String> params = paramVO.getParams();
+            params.put("material_id", TaoBaoPropertiesReader.getPros("taobao.sale-every-day"));
+
+            List list = materialOptionalService.seachProjectByMaterialId(paramVO);
+            PageHelper pageHelper = new PageHelper();
+            pageHelper.setPageNum(paramVO.getPageNum());
+            pageHelper.setPageSize(paramVO.getPageSize());
+            pageHelper.setData(list);
+            return ResponseResult.success(pageHelper);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseResult.failed("数据查询失败");
         }
     }
 
