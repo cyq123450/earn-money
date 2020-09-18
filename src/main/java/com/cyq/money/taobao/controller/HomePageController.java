@@ -1,7 +1,7 @@
 package com.cyq.money.taobao.controller;
 
 import com.cyq.money.commons.ResponseResult;
-import com.cyq.money.taobao.commons.PageHelper;
+import com.cyq.money.commons.PageHelper;
 import com.cyq.money.taobao.commons.TaoBaoPropertiesReader;
 import com.cyq.money.taobao.service.MaterialService;
 import com.cyq.money.vo.PageHelperParamVO;
@@ -45,7 +45,7 @@ public class HomePageController {
      * @return
      */
     @PostMapping("/search/sale-day")
-    public Object seachSaleVeryDay(@RequestBody PageHelperParamVO paramVO) {
+    public Object getSaleVeryDay(@RequestBody PageHelperParamVO paramVO) {
         try {
             Map<String, String> params = paramVO.getParams();
             params.put("material_id", TaoBaoPropertiesReader.getPros("taobao.sale-every-day"));

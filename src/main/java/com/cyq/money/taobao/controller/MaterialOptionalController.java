@@ -1,7 +1,7 @@
 package com.cyq.money.taobao.controller;
 
 import com.cyq.money.commons.ResponseResult;
-import com.cyq.money.taobao.commons.PageHelper;
+import com.cyq.money.commons.PageHelper;
 import com.cyq.money.taobao.commons.TaoBaoPropertiesReader;
 import com.cyq.money.taobao.service.MaterialService;
 import com.cyq.money.vo.PageHelperParamVO;

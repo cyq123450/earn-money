@@ -1,4 +1,4 @@
-package com.cyq.money.taobao.commons;
+package com.cyq.money.commons;
 
 /**
  * 分页实体类
