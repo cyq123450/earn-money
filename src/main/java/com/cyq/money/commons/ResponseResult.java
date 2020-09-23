@@ -19,16 +19,16 @@ public class ResponseResult<T> {
     private String msessage;
 
     // 响应数据
-    private T datas;
+    private T data;
 
     private ResponseResult(){
 
     }
 
-    private ResponseResult(Integer code, String message, T datas){
+    private ResponseResult(Integer code, String message, T data){
         this.code = code;
         this.msessage = message;
-        this.datas = datas;
+        this.data = data;
     }
 
     public static <T> ResponseResult<T> success() {

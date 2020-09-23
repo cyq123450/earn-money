@@ -16,10 +16,6 @@ import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 import jd.union.open.goods.jingfen.query.response.UnionOpenGoodsJingfenQueryResponse;
 import org.springframework.stereotype.Service;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -42,7 +38,6 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
         req.setGrade(0);
         request.setReq(req);
         UnionOpenCategoryGoodsGetResponse response = client.execute(request);
-
         CategoryResp[] data = response.getData();
 
         return data;
@@ -51,8 +46,8 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
 
     public JFGoodsResp[] getJingFengGoods(PageHelperParamVO paramVO) throws JdException {
         JdClient client=new DefaultJdClient(SERVER_URL,null, APP_KEY, APP_SECRET);
-        UnionOpenGoodsJingfenQueryRequest request=new UnionOpenGoodsJingfenQueryRequest();
-        JFGoodsReq goodsReq=new JFGoodsReq();
+        UnionOpenGoodsJingfenQueryRequest request = new UnionOpenGoodsJingfenQueryRequest();
+        JFGoodsReq goodsReq = new JFGoodsReq();
 
         // 过来参数设置
         Map<String, String> params = paramVO.getParams();
@@ -60,13 +55,11 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
             if (Objects.isNull(key)) {
                 continue;
             }
-
             switch (key) {
                 case "eliteId" : goodsReq.setEliteId(Integer.valueOf(params.get(key))); break;
                 default: break;
             }
         }
-
         // 设置分页数据
         goodsReq.setPageIndex((int)paramVO.getPageNum());
         goodsReq.setPageSize((int)paramVO.getPageSize());

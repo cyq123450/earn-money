@@ -6,16 +6,12 @@ import com.cyq.money.taobao.communication.MaterialCommunication;
 import com.cyq.money.vo.PageHelperParamVO;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
 import org.springframework.stereotype.Service;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.SocketAddress;
 import java.util.Map;
 
 /**
@@ -34,11 +30,6 @@ public class MaterialCommunicationImpl implements MaterialCommunication {
     @Override
     public Map getOptimuMaterial(PageHelperParamVO params) throws Exception {
         DefaultTaobaoClient client = new DefaultTaobaoClient(URL, APP_KEY, SECRET);
-
-        SocketAddress sa = new InetSocketAddress("proxy.cmcc", 8080);
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
-
-        client.setProxy(proxy);
 
         // 获取业务参数
         Map<String, String> param = params.getParams();
@@ -73,11 +64,6 @@ public class MaterialCommunicationImpl implements MaterialCommunication {
 
     public Map getOptimusMaterial(PageHelperParamVO params) throws ApiException {
         DefaultTaobaoClient client = new DefaultTaobaoClient(URL, APP_KEY, SECRET);
-
-        SocketAddress sa = new InetSocketAddress("proxy.cmcc", 8080);
-        Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
-
-        client.setProxy(proxy);
 
         // 获取业务参数
         Map<String, String> param = params.getParams();

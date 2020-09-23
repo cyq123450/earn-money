@@ -37,7 +37,7 @@ public class GoodsServiceImpl implements GoodsService {
     public List<Map> getRealTimeList(PageHelperParamVO paramVO) throws JdException {
         // TODO(后期需要优化)
 
-        paramVO.getParams().put("eliteId", JingDongPropertiesReader.getPros("real-time-list"));
+        paramVO.getParams().put("eliteId", JingDongPropertiesReader.getPros("jingdong.real-time-list"));
         JFGoodsResp[] jingFengGoods = goodsCommunication.getJingFengGoods(paramVO);
 
         return getSimpleProductForRealTimeList(jingFengGoods);

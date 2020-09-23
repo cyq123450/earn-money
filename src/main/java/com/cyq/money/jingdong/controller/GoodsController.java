@@ -6,10 +6,7 @@ import com.cyq.money.jingdong.service.GoodsService;
 import com.cyq.money.vo.PageHelperParamVO;
 import com.jd.open.api.sdk.JdException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +26,7 @@ public class GoodsController {
      * @param paramVO
      * @return
      */
-    @GetMapping("/get-real-time")
+    @PostMapping("/get-real-time")
     public Object getRealTimeList(@RequestBody PageHelperParamVO paramVO) {
         try {
             List<Map> realTimeList = goodsService.getRealTimeList(paramVO);
@@ -73,7 +70,7 @@ public class GoodsController {
      * @return
      */
     @RequestMapping("/get/sale-day")
-    public Object getSaleVeryDay( PageHelperParamVO paramVO) {
+    public Object getSaleVeryDay(@RequestBody PageHelperParamVO paramVO) {
         try {
             List saleVeryDay = goodsService.getSaleVeryDay(paramVO);
             PageHelper<Object> pageHelper = new PageHelper<>();
