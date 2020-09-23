@@ -1,42 +1,34 @@
 package com.cyq.money.taobao.commons;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  * @author cyq
  * @description 淘宝相关配置类
  * @date 2020/9/16 22:00
  */
+@Setter
+@Getter
+@Component
+@PropertySource(value = {"classpath:conf/taobao-config.properties"})
+@ConfigurationProperties(prefix = "taobao.pros")
 public class TaoBaoPropertiesReader {
 
-    private static final Properties pros = new Properties();
-    static {
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream((TaoBaoPropertiesReader.class.getResource("/") + "taobao-config.properties").replace("file:/", ""));
-            pros.load(fileInputStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+    private Map<String, String> map;
 
     /**
      * 获取淘宝配置文件的属性值
      * @param key
      * @return
      */
-    public static String getPros(String key) {
-        return pros.getProperty(key);
+    public String getVal(String key) {
+        return map.get(key);
     }
 
 }

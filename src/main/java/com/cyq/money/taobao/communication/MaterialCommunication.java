@@ -21,11 +21,11 @@ public interface MaterialCommunication {
     public Map getOptimuMaterial(PageHelperParamVO params) throws Exception;
 
     /**
-     * 通过物料ID选择对应的精选物料
+     * 通过关键字搜索物料池中的数据
      * @param params
      * @return
      * @throws ApiException
      */
-    public Map getOptimusMaterial(PageHelperParamVO params) throws ApiException;
+    public Map getOptionalMaterial(PageHelperParamVO params) throws ApiException;
 
 }

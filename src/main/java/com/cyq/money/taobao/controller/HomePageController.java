@@ -3,7 +3,7 @@ package com.cyq.money.taobao.controller;
 import com.cyq.money.commons.ResponseResult;
 import com.cyq.money.commons.PageHelper;
 import com.cyq.money.taobao.commons.TaoBaoPropertiesReader;
-import com.cyq.money.taobao.service.MaterialService;
+import com.cyq.money.taobao.service.TaoBaoMaterialService;
 import com.cyq.money.vo.PageHelperParamVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,10 @@ import java.util.Map;
 public class HomePageController {
 
     @Autowired
-    private MaterialService materialOptionalService;
+    private TaoBaoMaterialService materialOptionalService;
+
+    @Autowired
+    private TaoBaoPropertiesReader taoBaoPropertiesReader;
 
     /**
      * 首页中的搜索框接口
@@ -48,7 +51,7 @@ public class HomePageController {
     public Object getSaleVeryDay(@RequestBody PageHelperParamVO paramVO) {
         try {
             Map<String, String> params = paramVO.getParams();
-            params.put("material_id", TaoBaoPropertiesReader.getPros("taobao.sale-every-day"));
+            params.put("material_id", taoBaoPropertiesReader.getVal("sale-every-day"));
 
             List list = materialOptionalService.seachProjectByMaterialId(paramVO);
             PageHelper pageHelper = new PageHelper();

@@ -16,7 +16,7 @@ public class ResponseResult<T> {
     private Integer code;
 
     // 响应消息
-    private String msessage;
+    private String message;
 
     // 响应数据
     private T datas;
@@ -27,7 +27,7 @@ public class ResponseResult<T> {
 
     private ResponseResult(Integer code, String message, T datas){
         this.code = code;
-        this.msessage = message;
+        this.message = message;
         this.datas = datas;
     }
 
@@ -59,4 +59,14 @@ public class ResponseResult<T> {
         return new ResponseResult<T>(code, message, null);
     }
 
+    // 扩展
+    // 空数据
+    public static <T> ResponseResult<T> nullData() {
+        return new ResponseResult<T>(ResponseCode.NULL_DATA.getCode(), ResponseMsg.NULL_DATA.getMsg(), null);
+    }
+
+    // 参数错误
+    public static <T> ResponseResult<T> paramError() {
+        return new ResponseResult<T>(ResponseCode.PARAM_ERROR.getCode(), ResponseMsg.PARAM_ERROR.getMsg(), null);
+    }
 }

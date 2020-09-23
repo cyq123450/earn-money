@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum  ResponseMsg {
 
-    SUCCESS("操作成功"), FAILED("操作失败");
+    SUCCESS("操作成功"), FAILED("操作失败"), NULL_DATA("空数据"), PARAM_ERROR("参数错误");
 
     private String msg;
 

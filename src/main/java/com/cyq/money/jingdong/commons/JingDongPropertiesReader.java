@@ -15,7 +15,7 @@ public class JingDongPropertiesReader {
     static {
         FileInputStream fileInputStream = null;
         try {
-            fileInputStream = new FileInputStream((JingDongPropertiesReader.class.getResource("/") + "jingdong-config.properties").replace("file:/", ""));
+            fileInputStream = new FileInputStream((JingDongPropertiesReader.class.getResource("/") + "conf/jingdong-config.properties").replace("file:/", ""));
             pros.load(fileInputStream);
         } catch (Exception e) {
             e.printStackTrace();

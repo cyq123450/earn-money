@@ -1,29 +1,27 @@
 package com.cyq.money.taobao.service.impl;
 
-import com.cyq.money.taobao.commons.TaoBaoPropertiesReader;
+import com.cyq.money.commons.PageHelper;
+import com.cyq.money.taobao.cache.TaoBaoCache;
 import com.cyq.money.taobao.communication.MaterialCommunication;
-import com.cyq.money.taobao.service.MaterialService;
+import com.cyq.money.taobao.service.TaoBaoMaterialService;
 import com.cyq.money.vo.PageHelperParamVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author cyq
- * @description 物料类服务层接口实现类
+ * @description 淘宝物料类服务层接口实现类
  * @date 2020/9/16 21:48
  */
 @Service
-public class MaterialServiceImpl implements MaterialService {
+public class TaoBaoMaterialServiceImpl implements TaoBaoMaterialService {
 
     @Autowired
     private MaterialCommunication materialCommunication;
+
 
     @Override
     public Map<String, Object> getProductByTitle(PageHelperParamVO paramVO) throws Exception {
@@ -58,5 +56,14 @@ public class MaterialServiceImpl implements MaterialService {
         return datas;
     }
 
+    @Override
+    public List getFirstCategory() {
+        return TaoBaoCache.getFirstCategory();
+    }
+
+    @Override
+    public List<Map> searchGoods(PageHelperParamVO paramVO) {
+        return null;
+    }
 
 }
