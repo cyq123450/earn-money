@@ -37,64 +37,33 @@ public class MaterialCommunicationImpl implements MaterialCommunication {
 
         SocketAddress sa = new InetSocketAddress("proxy.cmcc", 8080);
         Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
-
         client.setProxy(proxy);
 
         // 获取业务参数
-        Map<String, String> param = params.getParams();
-
-        TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
+        TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
         req.setAdzoneId(Long.valueOf(taoBaoPropertiesReader.getVal("adzone-id")));
+        optimusMaterialRequestParamReBuild(params, req);
+        TbkDgOptimusMaterialResponse rsp = client.execute(req);
 
-       for(String key : param.keySet()) {
-           String value = param.get(key);
-           if (value == null || value.equals("")) {
-               continue;
-           }
-           switch (key) {
-               case "material_id": req.setMaterialId(Long.valueOf(value)); break;
-               case "q": req.setQ(value); break;
-               default: break;
-           }
-
-       }
-
-        // 设置分页信息(默认为第一页，每页20条数据)
-        req.setPageNo(params.getPageNum());
-        req.setPageSize(params.getPageSize());
-
-        TbkDgMaterialOptionalResponse rsp = client.execute(req);
-        String body = rsp.getBody();
-        if (body == null || body.equals("")) {
-            return null;
-        }
-        System.out.println(body);
-        Map map = JSONObject.parseObject(body, Map.class);
-        return map;
+        // 结果集处理
+        return processResult(rsp.getBody());
     }
 
     public Map getOptionalMaterial(PageHelperParamVO params) throws ApiException {
         DefaultTaobaoClient client = new DefaultTaobaoClient(taoBaoPropertiesReader.getVal("url"), taoBaoPropertiesReader.getVal("app-key"), taoBaoPropertiesReader.getVal("app-secret"));
+
         SocketAddress sa = new InetSocketAddress("proxy.cmcc", 8080);
         Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
         client.setProxy(proxy);
+
         // 获取业务参数
         TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
         req.setAdzoneId(Long.valueOf(taoBaoPropertiesReader.getVal("adzone-id")));
-        paramReBuild(params, req);
+        materialOptionalRequestParamReBuild(params, req);
         TbkDgMaterialOptionalResponse response = client.execute(req);
-        String body = response.getBody();
-        if (body == null || body.equals("")) {
-            return null;
-        }
-        System.out.println(response.getBody());
-        Map map = JSONObject.parseObject(body, Map.class);
-        // 查数据过多出现
-        String subCode = (String)map.get("sub_code");
-        if (subCode!= null && subCode.equals("50001")) {
-            return null;
-        }
-        return map;
+
+        // 结果集处理
+        return processResult(response.getBody());
     }
 
     /**
@@ -102,22 +71,74 @@ public class MaterialCommunicationImpl implements MaterialCommunication {
      * @param paramVO
      * @param req
      */
-    private void paramReBuild(PageHelperParamVO paramVO, TbkDgMaterialOptionalRequest req) {
+    private void materialOptionalRequestParamReBuild(PageHelperParamVO paramVO, TbkDgMaterialOptionalRequest req) {
         List<Map<String, String>> params = paramVO.getParams();
         if (params != null && params.size() > 0) {
             for(Map<String, String> map : params) {
-                for (String key : map.keySet()) {
-                    switch (key) {
-                        case "searchTerm":
-                            req.setQ(map.get(key)); break;  // 搜索关键词
-                        default:
-                            break;
-                    }
+                String key = map.get("key");
+                String val = map.get("val");
+                switch (key) {
+                    case "searchTerm":
+                        req.setQ(val);       // 搜索关键词
+                        break;
+                    case "materialId":
+                        req.setMaterialId(Long.valueOf(val)); // 精选物料池ID
+                        break;
+                    case "categoryId":
+                        req.setCat(val);      // 类目ID
+                        break;
+                    default:
+                        break;
                 }
             }
         }
         req.setPageNo(paramVO.getPageNum());    // 页数
         req.setPageSize(paramVO.getPageSize()); // 每页数量
+    }
+
+    /**
+     * 淘宝客-推广者-物料精选对接参数封装
+     * @param paramVO
+     * @param req
+     */
+    private void optimusMaterialRequestParamReBuild(PageHelperParamVO paramVO, TbkDgOptimusMaterialRequest req) {
+        List<Map<String, String>> params = paramVO.getParams();
+        if (params != null && params.size() > 0) {
+            for(Map<String, String> map : params) {
+                String key = map.get("key");
+                String val = map.get("val");
+                if (key == null || val == null) {
+                    continue;
+                }
+                switch (key) {
+                    case "materialId":
+                        req.setMaterialId(Long.valueOf(val)); break;  // 物料池ID
+                    default:
+                        break;
+                }
+            }
+        }
+        req.setPageNo(paramVO.getPageNum());    // 页数
+        req.setPageSize(paramVO.getPageSize()); // 每页数量
+    }
+
+    /**
+     * 处理结果集
+     * @param body
+     * @return
+     */
+    private Map processResult(String body) {
+        if (body == null || body.equals("")) {
+            return null;
+        }
+        System.out.println(body);
+        Map map = JSONObject.parseObject(body, Map.class);
+        // 查数据过多出现
+        String subCode = (String)map.get("sub_code");
+        if (subCode!= null && subCode.equals("50001")) {
+            return null;
+        }
+        return map;
     }
 
 }

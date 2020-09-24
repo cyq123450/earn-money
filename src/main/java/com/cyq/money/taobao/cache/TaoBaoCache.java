@@ -1,8 +1,6 @@
 package com.cyq.money.taobao.cache;
 
 import com.alibaba.fastjson.JSONReader;
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;

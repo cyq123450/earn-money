@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ public class PageHelperParamVO {
     private long pageSize;
     // 当前页
     private long pageNum;
-    // 业务参数
+    // 业务参数(使用“key”作为过滤的键  使用“val”作为过滤的值)
     private List<Map<String, String>> params = new ArrayList<>();
     // 平台类型(1:淘宝  2:京东  3:拼多多)
     private Integer goodCategory;

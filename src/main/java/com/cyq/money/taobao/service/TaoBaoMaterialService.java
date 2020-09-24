@@ -1,6 +1,7 @@
 package com.cyq.money.taobao.service;
 
 import com.cyq.money.vo.PageHelperParamVO;
+import com.taobao.api.ApiException;
 
 import java.util.List;
 import java.util.Map;
@@ -12,21 +13,38 @@ import java.util.Map;
  */
 public interface TaoBaoMaterialService {
 
-    public Map<String, Object> getProductByTitle(PageHelperParamVO paramVO) throws Exception;
-
-    public List seachProjectByMaterialId(PageHelperParamVO paramVO) throws Exception;
-
     /**
      * 获取商品的一级目录
      * @return
      */
-    public List getFirstCategory();
+    List getFirstCategory();
 
     /**
      * 查询物料池中的商品
      * @param paramVO
      * @return
      */
-    public List<Map> searchGoods(PageHelperParamVO paramVO);
+    List<Map> searchGoods(PageHelperParamVO paramVO) throws ApiException;
+
+    /**
+     * 获取今日必抢商品
+     * @param paramVO
+     * @return
+     */
+    List<Map> getSaleVeryDayGoods(PageHelperParamVO paramVO) throws Exception;
+
+    /**
+     * 获取猜你喜欢商品
+     * @param paramVO
+     * @return
+     */
+    List<Map> GetYouMayLike(PageHelperParamVO paramVO) throws Exception;
+
+    /**
+     * 获取实时榜单数据
+     * @param paramVO
+     * @return
+     */
+    List<Map> getRealTimeList(PageHelperParamVO paramVO) throws Exception;
 
 }
