@@ -1,0 +1,54 @@
+[
+	{
+		"firstCategoryId": "737",
+		"firstCategoryName": "家用电器"
+	},
+	{
+		"firstCategoryId": "1320",
+		"firstCategoryName": "食品饮料"
+	},
+	{
+		"firstCategoryId": "1318",
+		"firstCategoryName": "运动户外"
+	},
+	{
+		"firstCategoryId": "1620",
+		"firstCategoryName": "家居日用"
+	},
+	{
+		"firstCategoryId": "1713",
+		"firstCategoryName": "图书"
+	},
+	{
+		"firstCategoryId": "6233",
+		"firstCategoryName": "玩具乐器"
+	},
+	{
+		"firstCategoryId": "6196",
+		"firstCategoryName": "厨具"
+	},
+	{
+		"firstCategoryId": "17329",
+		"firstCategoryName": "箱包皮具"
+	},
+	{
+		"firstCategoryId": "670",
+		"firstCategoryName": "电脑、办公"
+	},
+	{
+		"firstCategoryId": "4053",
+		"firstCategoryName": "文娱"
+	},
+	{
+		"firstCategoryId": "6728",
+		"firstCategoryName": "汽车用品"
+	},
+	{
+		"firstCategoryId": "9855",
+		"firstCategoryName": "家装建材"
+	},
+	{
+		"firstCategoryId": "15901",
+		"firstCategoryName": "家庭清洁/纸品"
+	}
+]

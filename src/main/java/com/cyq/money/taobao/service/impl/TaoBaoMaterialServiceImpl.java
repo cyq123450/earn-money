@@ -82,7 +82,7 @@ public class TaoBaoMaterialServiceImpl implements TaoBaoMaterialService {
             }
             if (key.equals("categoryId")) {
                 Map optionalMaterial = materialCommunication.getOptionalMaterial(paramVO);
-                return processOptimusResultSimple(optionalMaterial);
+                return processOptionalResultSimple(optionalMaterial);
             }
         }
 
@@ -118,23 +118,27 @@ public class TaoBaoMaterialServiceImpl implements TaoBaoMaterialService {
             Map subMap = new HashMap<>();
             subMap.put("pictUrl", map.get("pict_url"));                     // 主图地址
             subMap.put("shortTitle", map.get("title"));               // 商品标题
-            subMap.put("couponAmount", map.get("coupon_amount"));           // 优惠券金额
             subMap.put("reservePrice", map.get("reserve_price"));           // 一口价
-            subMap.put("zkFinalPrice", map.get("zk_final_price"));          // 折扣价
             subMap.put("nick", map.get("nick"));                            // 卖家昵称
             String zk_final_price = (String) map.get("zk_final_price");
             if (zk_final_price == null || zk_final_price.equals("")) {
                 zk_final_price = "0";
             }
-            String coupon_amount = (String) map.get("coupon_amount");
-            if (coupon_amount == null || coupon_amount.equals("")) {
-                coupon_amount = "0";
+            Integer coupon_amount = (Integer) map.get("coupon_amount");
+            if (coupon_amount == null) {
+                coupon_amount = 0;
             }
             Float zkFinalPrice = Float.valueOf(zk_final_price);
             Float couponAmount = Float.valueOf(coupon_amount);
             Float afterCouponAmount = zkFinalPrice - couponAmount;
             DecimalFormat decimalFormat=new DecimalFormat(".00");
             subMap.put("afterCouponAmount", decimalFormat.format(afterCouponAmount));// 券后价
+            subMap.put("couponAmount", coupon_amount);           // 优惠券金额
+            if (zk_final_price.equals("0")) {                    // 折扣价
+                subMap.put("zkFinalPrice", map.get("reserve_price"));
+            } else {
+                subMap.put("zkFinalPrice", zk_final_price);
+            }
             subMap.put("itemId", map.get("item_id"));                       // 商品ID
             dataList.add(subMap);
         }
@@ -169,9 +173,7 @@ public class TaoBaoMaterialServiceImpl implements TaoBaoMaterialService {
             Map subMap = new HashMap<>();
             subMap.put("pictUrl", map.get("pict_url"));                     // 主图地址
             subMap.put("shortTitle", map.get("title"));               // 商品标题
-            subMap.put("couponAmount", map.get("coupon_amount"));           // 优惠券金额
             subMap.put("reservePrice", map.get("reserve_price"));           // 一口价
-            subMap.put("zkFinalPrice", map.get("zk_final_price"));          // 折扣价
             subMap.put("nick", map.get("nick"));                            // 卖家昵称
             String zk_final_price = (String) map.get("zk_final_price");
             if (zk_final_price == null || zk_final_price.equals("")) {
@@ -186,6 +188,12 @@ public class TaoBaoMaterialServiceImpl implements TaoBaoMaterialService {
             Float afterCouponAmount = zkFinalPrice - couponAmount;
             DecimalFormat decimalFormat=new DecimalFormat(".00");
             subMap.put("afterCouponAmount", decimalFormat.format(afterCouponAmount));// 券后价
+            subMap.put("couponAmount", coupon_amount);           // 优惠券金额
+            if (zk_final_price.equals("0")) {                    // 折扣价
+                subMap.put("zkFinalPrice", map.get("reserve_price"));
+            } else {
+                subMap.put("zkFinalPrice", zk_final_price);
+            }
             subMap.put("itemId", map.get("item_id"));                       // 商品ID
             dataList.add(subMap);
         }
