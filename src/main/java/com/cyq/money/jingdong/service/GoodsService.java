@@ -25,11 +25,10 @@ public interface GoodsService {
     public List<Map> getRealTimeList(PageHelperParamVO paramVO) throws JdException;
 
     /**
-     * 获取今日必抢数据
+     * 搜索商品
      * @param paramVO
      * @return
-     * @throws JdException
      */
-    public List getSaleVeryDay(PageHelperParamVO paramVO) throws JdException;
+    public List searchGood(PageHelperParamVO paramVO);
 
 }

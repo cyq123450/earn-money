@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum ResponseCode {
 
-    SUCCESS(200), FAILED(500);
+    SUCCESS(200), FAILED(500), NULL_DATA(100), PARAM_ERROR(101);
 
     // 响应码
     private Integer code;

@@ -14,11 +14,11 @@ import jd.union.open.goods.jingfen.query.request.JFGoodsReq;
 import jd.union.open.goods.jingfen.query.request.UnionOpenGoodsJingfenQueryRequest;
 import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 import jd.union.open.goods.jingfen.query.response.UnionOpenGoodsJingfenQueryResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 商品类信息对接京东服务接口实现类
@@ -26,64 +26,63 @@ import java.util.Objects;
 @Service
 public class GoodsCommunicationImpl implements GoodsCommunication {
 
-    private static final String SERVER_URL = JingDongPropertiesReader.getPros("jingdong.url");
-    private static final String APP_KEY = JingDongPropertiesReader.getPros("jingdong.app-key");
-    private static final String APP_SECRET = JingDongPropertiesReader.getPros("jingdong.app-secret");
+    @Autowired
+    private JingDongPropertiesReader jingDongPropertiesReader;
 
-    public CategoryResp[] getGoodsFirstCategory() throws JdException, IOException {
+    @Override
+    public CategoryResp[] getGoodsFirstCategory() throws JdException {
 
-        JdClient client = new DefaultJdClient(SERVER_URL,null, APP_KEY, APP_SECRET);
+        JdClient client = new DefaultJdClient(jingDongPropertiesReader.getVal("jingdong.url"),null, jingDongPropertiesReader.getVal("jingdong.app-key"), jingDongPropertiesReader.getVal("jingdong.app-secret"));
         UnionOpenCategoryGoodsGetRequest request = new UnionOpenCategoryGoodsGetRequest();
         CategoryReq req = new CategoryReq();
         req.setParentId(0);
         req.setGrade(0);
         request.setReq(req);
-
-        String apiMethod = request.getApiMethod();
-        String apiVersion = request.getApiVersion();
-        String appJsonParams = request.getAppJsonParams();
-        Map<String, String> sysParams = request.getSysParams();
-        sysParams.put("method", apiMethod);
-        sysParams.put("v", apiVersion);
-        sysParams.put("sign_method", "md5");
-
-
-
-
         UnionOpenCategoryGoodsGetResponse response = client.execute(request);
+
         CategoryResp[] data = response.getData();
 
         return data;
     }
 
-
+    @Override
     public JFGoodsResp[] getJingFengGoods(PageHelperParamVO paramVO) throws JdException {
-        JdClient client=new DefaultJdClient(SERVER_URL,null, APP_KEY, APP_SECRET);
-        UnionOpenGoodsJingfenQueryRequest request = new UnionOpenGoodsJingfenQueryRequest();
-        JFGoodsReq goodsReq = new JFGoodsReq();
 
+        JdClient client=new DefaultJdClient(jingDongPropertiesReader.getVal("jingdong.url"),null, jingDongPropertiesReader.getVal("jingdong.app-key"), jingDongPropertiesReader.getVal("jingdong.app-secret"));
+        UnionOpenGoodsJingfenQueryRequest request=new UnionOpenGoodsJingfenQueryRequest();
+        JFGoodsReq goodsReq=new JFGoodsReq();
 
-        // 过来参数设置
-        Map<String, String> params = paramVO.getParams();
-        for(String key : params.keySet()) {
-            if (Objects.isNull(key)) {
-                continue;
-            }
-            switch (key) {
-                case "eliteId" : goodsReq.setEliteId(Integer.valueOf(params.get(key))); break;
-                default: break;
-            }
-        }
-        // 设置分页数据
-        goodsReq.setPageIndex((int)paramVO.getPageNum());
-        goodsReq.setPageSize((int)paramVO.getPageSize());
-
-
+        // 参数设置
+        jingFengGoodsRequestParamReBuild(paramVO, goodsReq);
 
         request.setGoodsReq(goodsReq);
         UnionOpenGoodsJingfenQueryResponse response = client.execute(request);
         JFGoodsResp[] data = response.getData();
         return data;
+    }
+
+    /**
+     * 京粉精选商品查询接口对接参数封装
+     * @param paramVO
+     * @param req
+     */
+    private void jingFengGoodsRequestParamReBuild(PageHelperParamVO paramVO, JFGoodsReq req) {
+        List<Map<String, String>> params = paramVO.getParams();
+
+        if (params != null && params.size() > 0) {
+            for(Map<String, String> map : params) {
+                String key = map.get("key");
+                String val = map.get("val");
+                switch (key) {
+                    case "eliteId":
+                        req.setEliteId(Integer.valueOf(val)); break;  // 京粉eliteId
+                    default:
+                        break;
+                }
+            }
+        }
+        req.setPageIndex((int)(paramVO.getPageNum()));   // 页数
+        req.setPageSize((int)(paramVO.getPageSize()));   // 每页数量
     }
 
 

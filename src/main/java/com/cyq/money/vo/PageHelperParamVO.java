@@ -1,41 +1,28 @@
 package com.cyq.money.vo;
 
-import java.util.HashMap;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * 分页传参实体类
  */
+@Setter
+@Getter
+@NoArgsConstructor
 public class PageHelperParamVO {
 
-    // 当前页
-    private long pageSize;
     // 每页数据量大小
+    private long pageSize;
+    // 当前页
     private long pageNum;
-    // 业务参数
-    private Map<String, String> params = new HashMap<>();
+    // 业务参数(使用“key”作为过滤的键  使用“val”作为过滤的值)
+    private List<Map<String, String>> params = new ArrayList<>();
+    // 平台类型(1:淘宝  2:京东  3:拼多多)
+    private Integer goodCategory;
 
-    public long getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(long pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public long getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(long pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public Map<String, String> getParams() {
-        return params;
-    }
-
-    public void setParams(Map<String, String> params) {
-        this.params = params;
-    }
 }

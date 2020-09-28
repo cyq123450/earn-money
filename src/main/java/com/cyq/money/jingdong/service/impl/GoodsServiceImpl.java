@@ -10,7 +10,6 @@ import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -22,14 +21,12 @@ public class GoodsServiceImpl implements GoodsService {
     @Autowired
     private GoodsCommunication goodsCommunication;
 
+    @Autowired
+    private JingDongPropertiesReader jingDongPropertiesReader;
+
     @Override
     public List getFirstCategory() throws JdException {
-        CategoryResp[] categorys = new CategoryResp[0];
-        try {
-            categorys = goodsCommunication.getGoodsFirstCategory();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CategoryResp[] categorys = goodsCommunication.getGoodsFirstCategory();
         List datas = new ArrayList<>();
         for(CategoryResp categoryResp : categorys) {
             Map<String, String> parm = new HashMap<>();
@@ -41,42 +38,40 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public List<Map> getRealTimeList(PageHelperParamVO paramVO) throws JdException {
-        // TODO(后期需要优化)
+        List<Map<String, String>> params = paramVO.getParams();
+        Map map = new HashMap<>();
+        map.put("key", "eliteId");
+        map.put("val", jingDongPropertiesReader.getVal("real-time-list"));
+        params.add(map);
 
-        paramVO.getParams().put("eliteId", JingDongPropertiesReader.getPros("jingdong.real-time-list"));
         JFGoodsResp[] jingFengGoods = goodsCommunication.getJingFengGoods(paramVO);
 
-        return getSimpleProductForRealTimeList(jingFengGoods);
+        return processResultSimple(jingFengGoods);
     }
 
-    public List getJingFenGoodsByCondition(PageHelperParamVO paramVO) {
-        // paramVO.getParams().put("eliteId", JingDongPropertiesReader.getPros("real-time-list"));
+    @Override
+    public List searchGood(PageHelperParamVO paramVO) {
+
         return null;
     }
 
-    public List getSaleVeryDay(PageHelperParamVO paramVO) throws JdException {
-        paramVO.getParams().put("eliteId", JingDongPropertiesReader.getPros("jingdong.sale-every-day"));
-
-        JFGoodsResp[] jingFengGoods = goodsCommunication.getJingFengGoods(paramVO);
-        return getSimpleProductForRealTimeList(jingFengGoods);
-    }
-
     /**
-     * 实时榜单数据处理
+     * 简单处理结果集
+     * @param jingFengGoods
      * @return
      */
-    private List getSimpleProductForRealTimeList(JFGoodsResp[] jingFengGoods) {
+    private List processResultSimple(JFGoodsResp[] jingFengGoods) {
         List list = new ArrayList<>();
         for(JFGoodsResp resp : jingFengGoods) {
             Map map = new HashMap<>();
-            map.put("pict_url", resp.getImageInfo().getImageList()[0]); // 主图
-            map.put("sub_title", resp.getSkuName());    // 标题
-            map.put("coupon_amount","");    // 优惠券金额(京东优惠券比较特殊，里面存放的是集合数据)
-            map.put("reserve_price", resp.getPriceInfo().getPrice());   // 一口价
-            map.put("zk_final_price", resp.getPriceInfo().getLowestPrice());    // 折后价
-            map.put("nick", resp.getShopInfo().getShopName());  // 店铺名称
-            map.put("after_coupon_amount", resp.getPriceInfo().getLowestCouponPrice()); // 券后价
-            map.put("item_id", resp.getSkuId());    // 商品Id
+            map.put("pictUrl", resp.getImageInfo().getImageList()[0]);                  // 主图
+            map.put("shortTitle", resp.getSkuName());                                   // 标题
+            map.put("couponAmount","");                                                 // 优惠券金额(京东优惠券比较特殊，里面存放的是集合数据)
+            map.put("reservePrice", resp.getPriceInfo().getPrice());                    // 一口价
+            map.put("zkFinalPrice", resp.getPriceInfo().getLowestPrice());              // 折扣价
+            map.put("nick", resp.getShopInfo().getShopName());                          // 卖家昵称
+            map.put("afterCouponAmount", resp.getPriceInfo().getLowestCouponPrice());   // 券后价
+            map.put("itemId", resp.getSkuId());                                         // 商品Id
             list.add(map);
         }
         return list;

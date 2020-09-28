@@ -6,12 +6,18 @@ import com.cyq.money.taobao.communication.MaterialCommunication;
 import com.cyq.money.vo.PageHelperParamVO;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
+import com.taobao.api.TaobaoClient;
 import com.taobao.api.request.TbkDgMaterialOptionalRequest;
 import com.taobao.api.request.TbkDgOptimusMaterialRequest;
 import com.taobao.api.response.TbkDgMaterialOptionalResponse;
 import com.taobao.api.response.TbkDgOptimusMaterialResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,76 +28,116 @@ import java.util.Map;
 @Service
 public class MaterialCommunicationImpl implements MaterialCommunication {
 
-    private static final String URL = TaoBaoPropertiesReader.getPros("taobao.url");
-    private static final String APP_KEY = TaoBaoPropertiesReader.getPros("taobao.app-key");
-    private static final String SECRET = TaoBaoPropertiesReader.getPros("taobao.app-secret");
-    private static final String ADZONE_ID = TaoBaoPropertiesReader.getPros("taobao.adzone-id");
+    @Autowired
+    private TaoBaoPropertiesReader taoBaoPropertiesReader;
 
     @Override
     public Map getOptimuMaterial(PageHelperParamVO params) throws Exception {
-        DefaultTaobaoClient client = new DefaultTaobaoClient(URL, APP_KEY, SECRET);
+        DefaultTaobaoClient client = new DefaultTaobaoClient(taoBaoPropertiesReader.getVal("url"), taoBaoPropertiesReader.getVal("app-key"), taoBaoPropertiesReader.getVal("app-secret"));
+
+        SocketAddress sa = new InetSocketAddress("proxy.cmcc", 8080);
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
+        client.setProxy(proxy);
 
         // 获取业务参数
-        Map<String, String> param = params.getParams();
+        TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
+        req.setAdzoneId(Long.valueOf(taoBaoPropertiesReader.getVal("adzone-id")));
+        optimusMaterialRequestParamReBuild(params, req);
+        TbkDgOptimusMaterialResponse rsp = client.execute(req);
 
-        TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
-        req.setAdzoneId(Long.valueOf(ADZONE_ID));
-
-       for(String key : param.keySet()) {
-           String value = param.get(key);
-           if (value == null || value.equals("")) {
-               continue;
-           }
-
-           switch (key) {
-               case "material_id": req.setMaterialId(Long.valueOf(value)); break;
-               case "q": req.setQ(value); break;
-               default: break;
-           }
-
-       }
-
-        // 设置分页信息(默认为第一页，每页20条数据)
-        req.setPageNo(params.getPageNum());
-        req.setPageSize(params.getPageSize());
-
-        TbkDgMaterialOptionalResponse rsp = client.execute(req);
-        String body = rsp.getBody();
-        System.out.println(body);
-        Map map = JSONObject.parseObject(body, Map.class);
-        return map;
+        // 结果集处理
+        return processResult(rsp.getBody());
     }
 
-    public Map getOptimusMaterial(PageHelperParamVO params) throws ApiException {
-        DefaultTaobaoClient client = new DefaultTaobaoClient(URL, APP_KEY, SECRET);
+    public Map getOptionalMaterial(PageHelperParamVO params) throws ApiException {
+        DefaultTaobaoClient client = new DefaultTaobaoClient(taoBaoPropertiesReader.getVal("url"), taoBaoPropertiesReader.getVal("app-key"), taoBaoPropertiesReader.getVal("app-secret"));
+
+        SocketAddress sa = new InetSocketAddress("proxy.cmcc", 8080);
+        Proxy proxy = new Proxy(Proxy.Type.HTTP, sa);
+        client.setProxy(proxy);
 
         // 获取业务参数
-        Map<String, String> param = params.getParams();
+        TbkDgMaterialOptionalRequest req = new TbkDgMaterialOptionalRequest();
+        req.setAdzoneId(Long.valueOf(taoBaoPropertiesReader.getVal("adzone-id")));
+        materialOptionalRequestParamReBuild(params, req);
+        TbkDgMaterialOptionalResponse response = client.execute(req);
 
-        TbkDgOptimusMaterialRequest req = new TbkDgOptimusMaterialRequest();
-        req.setAdzoneId(Long.valueOf(ADZONE_ID));
+        // 结果集处理
+        return processResult(response.getBody());
+    }
 
-        for(String key : param.keySet()) {
-            String value = param.get(key);
-            if (value == null || value.equals("")) {
-                continue;
+    /**
+     * 淘宝客-推广者-物料搜索对接参数封装
+     * @param paramVO
+     * @param req
+     */
+    private void materialOptionalRequestParamReBuild(PageHelperParamVO paramVO, TbkDgMaterialOptionalRequest req) {
+        List<Map<String, String>> params = paramVO.getParams();
+        if (params != null && params.size() > 0) {
+            for(Map<String, String> map : params) {
+                String key = map.get("key");
+                String val = map.get("val");
+                switch (key) {
+                    case "searchTerm":
+                        req.setQ(val);       // 搜索关键词
+                        break;
+                    case "materialId":
+                        req.setMaterialId(Long.valueOf(val)); // 精选物料池ID
+                        break;
+                    case "categoryId":
+                        req.setCat(val);      // 类目ID
+                        break;
+                    default:
+                        break;
+                }
             }
-
-            switch (key) {
-                case "material_id": req.setMaterialId(Long.valueOf(value)); break;
-                default: break;
-            }
-
         }
+        req.setPageNo(paramVO.getPageNum());    // 页数
+        req.setPageSize(paramVO.getPageSize()); // 每页数量
+    }
 
-        // 设置分页信息(默认为第一页，每页20条数据)
-        req.setPageNo(params.getPageNum());
-        req.setPageSize(params.getPageSize());
+    /**
+     * 淘宝客-推广者-物料精选对接参数封装
+     * @param paramVO
+     * @param req
+     */
+    private void optimusMaterialRequestParamReBuild(PageHelperParamVO paramVO, TbkDgOptimusMaterialRequest req) {
+        List<Map<String, String>> params = paramVO.getParams();
+        if (params != null && params.size() > 0) {
+            for(Map<String, String> map : params) {
+                String key = map.get("key");
+                String val = map.get("val");
+                if (key == null || val == null) {
+                    continue;
+                }
+                switch (key) {
+                    case "materialId":
+                        req.setMaterialId(Long.valueOf(val)); break;  // 物料池ID
+                    default:
+                        break;
+                }
+            }
+        }
+        req.setPageNo(paramVO.getPageNum());    // 页数
+        req.setPageSize(paramVO.getPageSize()); // 每页数量
+    }
 
-        TbkDgOptimusMaterialResponse rsp = client.execute(req);
-        String body = rsp.getBody();
-        System.out.println(rsp.getBody());
+    /**
+     * 处理结果集
+     * @param body
+     * @return
+     */
+    private Map processResult(String body) {
+        if (body == null || body.equals("")) {
+            return null;
+        }
+        System.out.println(body);
         Map map = JSONObject.parseObject(body, Map.class);
+        // 查数据过多出现
+        String subCode = (String)map.get("sub_code");
+        if (subCode!= null && subCode.equals("50001")) {
+            return null;
+        }
         return map;
     }
 
