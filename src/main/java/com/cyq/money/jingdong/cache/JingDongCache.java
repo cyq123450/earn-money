@@ -1,7 +1,6 @@
 package com.cyq.money.jingdong.cache;
 
 import com.alibaba.fastjson.JSONReader;
-import com.cyq.money.taobao.cache.TaoBaoCache;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;

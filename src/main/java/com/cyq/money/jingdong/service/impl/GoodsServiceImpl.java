@@ -10,6 +10,7 @@ import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -25,7 +26,7 @@ public class GoodsServiceImpl implements GoodsService {
     private JingDongPropertiesReader jingDongPropertiesReader;
 
     @Override
-    public List getFirstCategory() throws JdException {
+    public List getFirstCategory() throws JdException, IOException {
         CategoryResp[] categorys = goodsCommunication.getGoodsFirstCategory();
         List datas = new ArrayList<>();
         for(CategoryResp categoryResp : categorys) {
