@@ -5,6 +5,8 @@ import com.jd.open.api.sdk.JdException;
 import jd.union.open.category.goods.get.response.CategoryResp;
 import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 
+import java.io.IOException;
+
 /**
  * 商品类数据对接京东服务接口
  */
@@ -15,7 +17,7 @@ public interface GoodsCommunication {
      * @return
      * @throws JdException
      */
-    public CategoryResp[] getGoodsFirstCategory() throws JdException;
+    public CategoryResp[] getGoodsFirstCategory() throws JdException, IOException;
 
     /**
      * 获取京粉商品信息

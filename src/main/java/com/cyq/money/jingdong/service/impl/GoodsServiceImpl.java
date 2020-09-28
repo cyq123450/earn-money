@@ -10,6 +10,7 @@ import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -23,7 +24,12 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public List getFirstCategory() throws JdException {
-        CategoryResp[] categorys = goodsCommunication.getGoodsFirstCategory();
+        CategoryResp[] categorys = new CategoryResp[0];
+        try {
+            categorys = goodsCommunication.getGoodsFirstCategory();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         List datas = new ArrayList<>();
         for(CategoryResp categoryResp : categorys) {
             Map<String, String> parm = new HashMap<>();

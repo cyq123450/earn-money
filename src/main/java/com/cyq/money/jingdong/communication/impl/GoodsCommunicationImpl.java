@@ -16,6 +16,7 @@ import jd.union.open.goods.jingfen.query.response.JFGoodsResp;
 import jd.union.open.goods.jingfen.query.response.UnionOpenGoodsJingfenQueryResponse;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
     private static final String APP_KEY = JingDongPropertiesReader.getPros("jingdong.app-key");
     private static final String APP_SECRET = JingDongPropertiesReader.getPros("jingdong.app-secret");
 
-    public CategoryResp[] getGoodsFirstCategory() throws JdException {
+    public CategoryResp[] getGoodsFirstCategory() throws JdException, IOException {
 
         JdClient client = new DefaultJdClient(SERVER_URL,null, APP_KEY, APP_SECRET);
         UnionOpenCategoryGoodsGetRequest request = new UnionOpenCategoryGoodsGetRequest();
@@ -37,6 +38,18 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
         req.setParentId(0);
         req.setGrade(0);
         request.setReq(req);
+
+        String apiMethod = request.getApiMethod();
+        String apiVersion = request.getApiVersion();
+        String appJsonParams = request.getAppJsonParams();
+        Map<String, String> sysParams = request.getSysParams();
+        sysParams.put("method", apiMethod);
+        sysParams.put("v", apiVersion);
+        sysParams.put("sign_method", "md5");
+
+
+
+
         UnionOpenCategoryGoodsGetResponse response = client.execute(request);
         CategoryResp[] data = response.getData();
 
@@ -48,6 +61,7 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
         JdClient client=new DefaultJdClient(SERVER_URL,null, APP_KEY, APP_SECRET);
         UnionOpenGoodsJingfenQueryRequest request = new UnionOpenGoodsJingfenQueryRequest();
         JFGoodsReq goodsReq = new JFGoodsReq();
+
 
         // 过来参数设置
         Map<String, String> params = paramVO.getParams();
@@ -63,6 +77,8 @@ public class GoodsCommunicationImpl implements GoodsCommunication {
         // 设置分页数据
         goodsReq.setPageIndex((int)paramVO.getPageNum());
         goodsReq.setPageSize((int)paramVO.getPageSize());
+
+
 
         request.setGoodsReq(goodsReq);
         UnionOpenGoodsJingfenQueryResponse response = client.execute(request);
