@@ -55,7 +55,7 @@ public class HomePageController {
             return ResponseResultUtils.pageResultProcess(paramVO, list);
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseResult.failed();
+            return ResponseResult.failed("商品查询失败");
         }
 
     }

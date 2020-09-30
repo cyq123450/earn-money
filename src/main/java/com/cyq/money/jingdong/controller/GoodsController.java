@@ -50,7 +50,7 @@ public class GoodsController {
         try {
             List firstCategory = goodsService.getFirstCategory();
             return ResponseResultUtils.resultProcess(firstCategory);
-        } catch (JdException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseResult.failed("商品一级分类信息获取失败");
         }
